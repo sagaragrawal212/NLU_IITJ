@@ -1,4 +1,5 @@
 import string
+import ast
 
 def lowercase_text(text):
     # Convert the text to lowercase

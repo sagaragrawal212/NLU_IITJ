@@ -1,10 +1,11 @@
 import pandas as pd
-from config import data_path
+from config import data_path,vectorizer
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 from SentimentClassifier import SentimentClassifier
 
 ## Read Data
+print("Loading Data ...")
 df = pd.read_csv(data_path)
 df = df[df.reviewText.notnull()]
 X = df['reviewText']
@@ -29,13 +30,12 @@ classifiers = [
     {'model_name': 'random_forest', 'params': rf_params}
 ]
 
-vectorizer = "delta_tf_idf"
-
+print("Training Start ...")
 # Iterate over each classifier and its parameters
 for classifier in classifiers:
     model_name = classifier['model_name']
     params = classifier['params']
-
+    print("Training {model_name} with params : {params}")
     for param in params :
 
         key,val = param.split("__")

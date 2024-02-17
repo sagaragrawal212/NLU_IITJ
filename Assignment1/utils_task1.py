@@ -29,3 +29,10 @@ def find_mismatch(true_label, predicted_label):
         if len(true)!=len(predicted):
             mismatch.append(idx)
     return mismatch
+
+def match_length(true, predicted):
+    mismatch = find_mismatch(true, predicted)
+    for idx in mismatch:
+        true_length = len(true[idx])
+        predicted[idx] = predicted[idx][0:true_length]
+    return true, predicted

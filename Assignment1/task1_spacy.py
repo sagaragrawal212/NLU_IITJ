@@ -19,6 +19,8 @@ def predict_tag_ner(texts):
 if __name__ == "__main__":
     texts, posi, tgs = create_data(load_csv())
     predicted_pos_tags, predicted_entities = predict_tag_ner(texts)
+    posi, predicted_pos_tags = match_length(posi, predicted_pos_tags)
+    tgs, predicted_entities = match_length(tgs, predicted_entities)
     accuracy_pos, confusion_matrix_pos, accuracy_ner, confusion_matrix_ner = accuracy_confusion_matrix(posi, tgs,
                                                                                                        predicted_pos_tags,
                                                                                                        predicted_entities

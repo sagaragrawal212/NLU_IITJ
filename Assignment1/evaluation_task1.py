@@ -1,6 +1,6 @@
 from sklearn.metrics import accuracy_score, confusion_matrix
 
-from NLU_IITJ.Assignment1.utils_task1 import *
+from utils_task1 import *
 
 def accuracy_confusion_matrix(true_tag, true_ner, predicted_tag, predicted_ner):
     accuracy_pos = accuracy_score(flatten_list(true_tag), flatten_list(predicted_tag))

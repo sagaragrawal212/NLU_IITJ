@@ -1,5 +1,5 @@
-from NLU_IITJ.Assignment1.utils_task1 import *
-from NLU_IITJ.Assignment1.evaluation_task1 import *
+from utils_task1 import *
+from evaluation_task1 import *
 from tqdm import tqdm
 import spacy
 

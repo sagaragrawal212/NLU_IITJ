@@ -1,19 +1,22 @@
 import pandas as pd
+import numpy as np
 from config import data_path,vectorizer
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 from SentimentClassifier import SentimentClassifier
+from pre_process import preprocess_text_task2
 
 ## Read Data
 print("Loading Data ...")
-df = pd.read_csv(data_path)
+df = pd.read_csv(data_path, nrows = 100)
 df = df[df.reviewText.notnull()]
-X = df['reviewText']
+# X = df['reviewText']
 y = df['overall'].astype(int)
 
-#####################################################################
-########## Data Preprocessing steps needs to be added ###############
-#####################################################################
+#Data Preprocessing 
+df['reviewTextCLeaned'] = df['reviewText'].apply(lambda x : preprocess_text_task2(x))
+
+X = df['reviewTextCLeaned']
 
 # Perform test train split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -22,10 +25,13 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # Define the parameters for each model
 dt_params = ['criterion__entropy','criterion__gini']
 rf_params = ['n_estimators__20', 'n_estimators__50', 'n_estimators__100']
+gnb_params = ['var_smoothing__1e-9' ]
+mnb_params = ['alpha__1' ]
 
 # Define a list of classifiers with their respective parameters
 classifiers = [
-    # {'model_name': 'naive_bayes', 'params': nb_params},
+    {'model_name': 'naive_bayes_gaussian', 'params': gnb_params},
+     {'model_name': 'naive_bayes_multinomial', 'params': mnb_params},
     {'model_name': 'decision_tree', 'params': dt_params},
     {'model_name': 'random_forest', 'params': rf_params}
 ]
@@ -35,11 +41,13 @@ print("Training Start ...")
 for classifier in classifiers:
     model_name = classifier['model_name']
     params = classifier['params']
-    print("Training {model_name} with params : {params}")
+    print(f"Training {model_name} with params : {params}")
     for param in params :
 
         key,val = param.split("__")
-        if val.isnumeric() :
+        if key == 'var_smoothing':
+          val = float(val)
+        elif val.isnumeric() :
           val = int(val)
 
         param_dict = {key : val}
@@ -47,6 +55,7 @@ for classifier in classifiers:
         clf = SentimentClassifier(model_name,vectorizer, **param_dict)
 
         # Train the classifier
+
         clf.train(X_train, y_train)
 
         # Make predictions on the test data

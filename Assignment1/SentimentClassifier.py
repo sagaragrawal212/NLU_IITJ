@@ -8,9 +8,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 from joblib import load,dump
+from chisquare_feature_selection import chi_square_tfidf_feature_selection
 
 class SentimentClassifier:
-    def __init__(self, model_name,vectorizer_name, **kwargs):
+    def __init__(self, model_name,vectorizer_name,feature_selection, **kwargs):
         self.model_name = model_name
         self.kwargs = kwargs
         self.vectorizer_name = vectorizer_name
@@ -22,14 +23,22 @@ class SentimentClassifier:
           self.vectorizer = DeltaTfidfVectorizer(analyzer="word", norm="l1", use_idf=True, dtype=np.float32,ngram_range=(1, 3), min_df=5)
 
         self.model = None
+        self.feature_selection = feature_selection
 
     def train(self, X_train, y_train):
 
         # Vectorizer
         if self.vectorizer_name == "tf_idf" :
-          X_train = self.vectorizer.fit_transform(X_train)
+          X_train_tfidf = self.vectorizer.fit_transform(X_train)
         elif self.vectorizer_name == "delta_tf_idf" :
-          X_train = self.vectorizer.fit_transform(X_train.tolist(), y_train.tolist())
+          X_train_tfidf = self.vectorizer.fit_transform(X_train.tolist(), y_train.tolist())
+
+        # Feature Selection
+        if self.feature_selection :
+          print("Running Feature Selection ...")
+          self.important_feature_indices = chi_square_tfidf_feature_selection(X_train_tfidf, y_train, k=int(0.4*len(self.vectorizer.get_feature_names_out())))
+          feature_names = self.vectorizer.get_feature_names_out()[self.important_feature_indices]
+          X_train_tfidf = self.vectorizer.transform(X_train)[:, self.important_feature_indices]
 
         # Model
         if self.model_name == "naive_bayes_gaussian" :
@@ -46,8 +55,8 @@ class SentimentClassifier:
 
         # Training
         if self.model_name in ['naive_bayes_gaussian', 'naive_bayes_multinomial']:
-          X_train = np.asarray(X_train.todense())
-        self.model.fit(X_train, y_train)
+          X_train_tfidf = np.asarray(X_train_tfidf.todense())
+        self.model.fit(X_train_tfidf, y_train)
 
         #save model 
         dump(self.model, self.model_path)
@@ -58,7 +67,12 @@ class SentimentClassifier:
     def predict(self, X_test):
         vectorizer = load(self.vectorizer_path)
         model = load(self.model_path)
-        X_test = vectorizer.transform(X_test.tolist())
+
+        if self.feature_selection :
+          X_test = self.vectorizer.transform(X_test.tolist())[:, self.important_feature_indices]
+        else :
+          X_test = vectorizer.transform(X_test.tolist())
+
         if self.model_name in ['naive_bayes_gaussian', 'naive_bayes_multinomial']:
           X_test = np.asarray(X_test.todense())
         return model.predict(X_test)

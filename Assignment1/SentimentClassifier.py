@@ -7,12 +7,15 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from sklearn.model_selection import train_test_split
+from joblib import load,dump
 
 class SentimentClassifier:
     def __init__(self, model_name,vectorizer_name, **kwargs):
         self.model_name = model_name
         self.kwargs = kwargs
         self.vectorizer_name = vectorizer_name
+        self.model_path = f"/content/{self.kwargs}_model.pt"
+        self.vectorizer_path = f"/content/{self.vectorizer_name}_vectorizer.pt"
         if vectorizer_name == "tf_idf" :
           self.vectorizer = TfidfVectorizer(analyzer="word", norm="l1", use_idf=True, dtype=np.float32,ngram_range=(1, 3), min_df=5)
         elif vectorizer_name == "delta_tf_idf" :
@@ -42,8 +45,20 @@ class SentimentClassifier:
           self.model = RandomForestClassifier(**self.kwargs)
 
         # Training
+        if self.model_name in ['naive_bayes_gaussian', 'naive_bayes_multinomial']:
+          X_train = np.asarray(X_train.todense())
         self.model.fit(X_train, y_train)
 
+        #save model 
+        dump(self.model, self.model_path)
+
+        #save vectorizer
+        dump(self.vectorizer, self.vectorizer_path )
+
     def predict(self, X_test):
-        X_test = self.vectorizer.transform(X_test.tolist())
-        return self.model.predict(X_test)
+        vectorizer = load(self.vectorizer_path)
+        model = load(self.model_path)
+        X_test = vectorizer.transform(X_test.tolist())
+        if self.model_name in ['naive_bayes_gaussian', 'naive_bayes_multinomial']:
+          X_test = np.asarray(X_test.todense())
+        return model.predict(X_test)

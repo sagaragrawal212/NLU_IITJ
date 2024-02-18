@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import itertools
-from NLU_IITJ.Assignment1.pre_process import *
+from pre_process import *
 
 path = os.path.join(os.path.join(os.getcwd(), 'archive'), 'NER_Dataset.csv')
 

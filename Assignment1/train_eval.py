@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from config import data_path,vectorizer
+from config import data_path,vectorizer,feature_selection
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 from SentimentClassifier import SentimentClassifier
@@ -52,10 +52,9 @@ for classifier in classifiers:
 
         param_dict = {key : val}
         # Instantiate the SentimentClassifier object
-        clf = SentimentClassifier(model_name,vectorizer, **param_dict)
-
+        clf = SentimentClassifier(model_name,vectorizer,feature_selection, **param_dict)
+        
         # Train the classifier
-
         clf.train(X_train, y_train)
 
         # Make predictions on the test data

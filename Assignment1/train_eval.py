@@ -8,7 +8,7 @@ from pre_process import preprocess_text_task2
 
 ## Read Data
 print("Loading Data ...")
-df = pd.read_csv(data_path, nrows = 100)
+df = pd.read_csv(data_path)
 df = df[df.reviewText.notnull()]
 # X = df['reviewText']
 y = df['overall'].astype(int)

@@ -97,11 +97,55 @@ if __name__ == "__main__":
 
   #evaluation
   accuracy_pos,cm_pos,accuracy_ner,cm_ner = accuracy_confusion_matrix(df.new_pos.tolist(),
-                                                                    df.new_ner_mapped.tolist(), #df.new_ner.tolist(),
-                                                                    df.pos_pred.tolist(),
-                                                                    df.ner_pred.tolist() )
+                                                                  df.new_ner_mapped.tolist(), #df.new_ner.tolist(),
+                                                                  df.pos_pred.tolist(),
+                                                                  df.ner_pred.tolist() )
   print("Accuracy POS tagging:", accuracy_pos)
-  # print("Confusion Matrix POS tagging:\n", cm_pos)
+  
+  import itertools
+  def flatten_list(array):
+      return list(itertools.chain.from_iterable(array))
+  
+  print("Confusion Matrix POS tagging:\n", cm_pos)
+  df_res_pos = pd.DataFrame({"actual" : flatten_list(df.new_pos.tolist()),
+              "predicted" : flatten_list(df.pos_pred.tolist())})
+  
+  df_res_ner = pd.DataFrame({"actual" : flatten_list(df.new_ner_mapped.tolist()),
+              "predicted" : flatten_list(df.ner_pred.tolist())})
+  df_res_ner['predicted'] = df_res_ner.predicted.apply(lambda text : text.replace("\n",''))
+  
+  # Create a confusion matrix (POS)
+  labels = sorted(list(set(df_res_pos['actual']).union(set(df_res_pos['predicted']))))
+  cm = confusion_matrix(df_res_pos['actual'], df_res_pos['predicted'], labels=labels)
+  
+  # Plot confusion matrix with annotations
+  plt.figure(figsize=(10, 8))
+  sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=labels, yticklabels=labels)
+  plt.xlabel('Predicted')
+  plt.ylabel('Actual')
+  plt.title('Confusion Matrix POS')
+  plt.show()
+  
   print("Accuracy NER:", accuracy_ner)
-  # print("Confusion Matrix NER:\n", cm_ner)
-  print("CM size", len(cm_pos), len(cm_ner))
+    # Create a confusion matrix (NER)
+  labels = sorted(list(set(df_res_ner['actual']).union(set(df_res_ner['predicted']))))
+  cm_ner = confusion_matrix(df_res_ner['actual'], df_res_ner['predicted'], labels=labels)
+  print("Confusion Matrix NER:\n", cm_ner)
+  # Plot confusion matrix with annotations
+  plt.figure(figsize=(10, 8))
+  sns.heatmap(cm_ner, annot=True, fmt="d", cmap="Blues", xticklabels=labels, yticklabels=labels)
+  plt.xlabel('Predicted')
+  plt.ylabel('Actual')
+  plt.title('Confusion Matrix NER')
+  plt.show()
+
+  # #evaluation
+  # accuracy_pos,cm_pos,accuracy_ner,cm_ner = accuracy_confusion_matrix(df.new_pos.tolist(),
+  #                                                                   df.new_ner_mapped.tolist(), #df.new_ner.tolist(),
+  #                                                                   df.pos_pred.tolist(),
+  #                                                                   df.ner_pred.tolist() )
+  # print("Accuracy POS tagging:", accuracy_pos)
+  # # print("Confusion Matrix POS tagging:\n", cm_pos)
+  # print("Accuracy NER:", accuracy_ner)
+  # # print("Confusion Matrix NER:\n", cm_ner)
+  # print("CM size", len(cm_pos), len(cm_ner))

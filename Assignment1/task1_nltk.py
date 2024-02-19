@@ -89,9 +89,9 @@ if __name__ == "__main__" :
                           "I-tim": "O",
                           "O": "O"
                       }
-  reverse_map = {"LOCATION" : "GPE","GSP" : "GPE"}
+  reverse_map = {"LOCATION" : "GPE","GSP" : "GPE","FACILITY" : "O"}
   df['new_ner_mapped'] = df.Cleaned_NER.apply(lambda x : [ner_dataset_to_nltk[each] for each in x])
-  df['result_ner'] = df.result_ner.apply(lambda x : [reverse_map[each] if each in ("LOCATION","GSP") else each for each in x ])
+  df['result_ner'] = df.result_ner.apply(lambda x : [reverse_map[each] if each in ("LOCATION","GSP","FACILITY") else each for each in x ])
 
   #evaluation
   accuracy_pos,cm_pos,accuracy_ner,cm_ner = accuracy_confusion_matrix(df.Cleaned_POS.tolist(),

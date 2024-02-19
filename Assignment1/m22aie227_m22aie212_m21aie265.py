@@ -186,7 +186,7 @@ if __name__ == '__main__':
   X = df['reviewTextCLeaned']
   
   # Perform test train split
-  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify = y)
   
   # Assuming you have X_test and y_test as the test data and labels
   # Define the parameters for each model

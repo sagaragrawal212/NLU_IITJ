@@ -10,6 +10,8 @@ from config import *
 from sklearn.metrics import confusion_matrix
 from utils_task1 import flatten_list
 from config import ner_pos_data_path
+import matplotlib.pyplot as plt
+import seaborn as sns
 # Download NLTK resources
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')

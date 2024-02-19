@@ -18,7 +18,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 lemmatizer = WordNetLemmatizer()
-# import string
+import string
 import re
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -247,7 +247,7 @@ if __name__ == '__main__':
           cm = confusion_matrix(df_pred['Actual'], df_pred['Predicted'], labels=labels)
         
           # Plot confusion matrix with annotations
-          plt.figure(figsize=(10, 8))
+          plt.figure(figsize=(5, 4))
           sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=labels, yticklabels=labels)
           plt.xlabel('Predicted')
           plt.ylabel('Actual')
@@ -271,7 +271,7 @@ if __name__ == '__main__':
           cm = confusion_matrix(df_pred['binary_true'], df_pred['binary_pred'], labels=labels)
         
           # Plot confusion matrix with annotations
-          plt.figure(figsize=(10, 8))
+          plt.figure(figsize=(5, 4))
           sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=labels, yticklabels=labels)
           plt.xlabel('Predicted')
           plt.ylabel('Actual')

@@ -24,6 +24,7 @@ class SentimentClassifier:
 
         self.model = None
         self.feature_selection = feature_selection
+        self.test_pred_path = f"/content/{self.kwargs}_pred.csv"
 
     def train(self, X_train, y_train):
 
@@ -64,15 +65,18 @@ class SentimentClassifier:
         #save vectorizer
         dump(self.vectorizer, self.vectorizer_path )
 
-    def predict(self, X_test):
+    def predict(self, X_test, y_test):
         vectorizer = load(self.vectorizer_path)
         model = load(self.model_path)
 
         if self.feature_selection :
-          X_test = self.vectorizer.transform(X_test.tolist())[:, self.important_feature_indices]
+          X_test_tf_idf = vectorizer.transform(X_test.tolist())[:, self.important_feature_indices]
         else :
-          X_test = vectorizer.transform(X_test.tolist())
+          X_test_tf_idf = vectorizer.transform(X_test.tolist())
 
         if self.model_name in ['naive_bayes_gaussian', 'naive_bayes_multinomial']:
-          X_test = np.asarray(X_test.todense())
-        return model.predict(X_test)
+          X_test_tf_idf = np.asarray(X_test_tf_idf.todense())
+        y_pred = model.predict(X_test_tf_idf)
+        df_pred = pd.DataFrame({"Review": X_test.tolist(), "Actual": y_test, "Predicted": y_pred})
+        df_pred.to_csv(self.test_pred_path, index=False)
+        return y_pred

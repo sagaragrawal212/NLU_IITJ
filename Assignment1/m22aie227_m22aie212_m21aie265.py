@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn_deltatfidf import DeltaTfidfVectorizer
@@ -163,8 +165,8 @@ def evaluate_prediction_on_test_set(y_test, y_pred):
   print("Precision:", precision)
   print("Recall:", recall)
   print("F1 Score:", f1)
-  print("Confusion Matrix:\n", conf_matrix)
-  return accuracy, precision, recall, f1, conf_matrix
+  # print("Confusion Matrix:\n", conf_matrix)
+  # return accuracy, precision, recall, f1, conf_matrix
 
 data_path = "/content/AMAZON_FASHION.csv"
 vectorizer = "delta_tf_idf"
@@ -230,7 +232,7 @@ if __name__ == '__main__':
           # precision = precision_score(y_test, pred)
           # recall = recall_score(y_test, pred)
           # f1score = f1_score(y_test, pred)
-          confusion = confusion_matrix(y_test, pred)
+          # confusion = confusion_matrix(y_test, pred)
   
           # Print the results
           print(f"Results for {model_name} with parameters {param_dict}:")
@@ -238,8 +240,19 @@ if __name__ == '__main__':
           # print("Precision:", precision)
           # print("Recall:", recall)
           # print("F1 Score:", f1score)
-          print("Confusion Matrix:\n", confusion)
-          print()
+          # print("Confusion Matrix:\n", confusion)
+          
+          #Create a confusion matrix
+          labels = sorted(list(set(df_pred['Actual']).union(set(df_pred['Predicted']))))
+          cm = confusion_matrix(df_pred['Actual'], df_pred['Predicted'], labels=labels)
+        
+          # Plot confusion matrix with annotations
+          plt.figure(figsize=(10, 8))
+          sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=labels, yticklabels=labels)
+          plt.xlabel('Predicted')
+          plt.ylabel('Actual')
+          plt.title('Confusion Matrix For Multi class Classification')
+          plt.show()
 
           # binary evaluation
           df_pred['binary_true'] = df_pred.Actual.apply(multi_to_binary_transform)
@@ -252,4 +265,16 @@ if __name__ == '__main__':
           #print binary classification evaluation metrics
           print("binary classification evaluation metrics : \n")
           evaluate_prediction_on_test_set(df_pred.binary_true, df_pred.binary_pred)
-    
+
+          # Create a confusion matrix (POS)
+          labels = sorted(list(set(df_pred['binary_true']).union(set(df_pred['binary_pred']))))
+          cm = confusion_matrix(df_pred['binary_true'], df_pred['binary_pred'], labels=labels)
+        
+          # Plot confusion matrix with annotations
+          plt.figure(figsize=(10, 8))
+          sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=labels, yticklabels=labels)
+          plt.xlabel('Predicted')
+          plt.ylabel('Actual')
+          plt.title('Confusion Matrix For Binary Classification')
+          plt.show()
+            

@@ -242,14 +242,14 @@ if __name__ == '__main__':
           print()
 
           # binary evaluation
-          test_df['binary_true'] = test_df.Actual.apply(multi_to_binary_transform)
-          test_df['binary_pred'] = test_df.Predicted.apply(multi_to_binary_transform)
+          df_pred['binary_true'] = df_pred.Actual.apply(multi_to_binary_transform)
+          df_pred['binary_pred'] = df_pred.Predicted.apply(multi_to_binary_transform)
         
           # #print multiclass classification evaluation metrics
           # print("multiclass classification evaluation metrics : \n")
-          # evaluate_prediction_on_test_set(df.label_true, df.label_pred)
+          # evaluate_prediction_on_test_set(df_pred.label_true, df_pred.label_pred)
         
           #print binary classification evaluation metrics
           print("binary classification evaluation metrics : \n")
-          evaluate_prediction_on_test_set(test_df.binary_true, test_df.binary_pred)
+          evaluate_prediction_on_test_set(df_pred.binary_true, df_pred.binary_pred)
     

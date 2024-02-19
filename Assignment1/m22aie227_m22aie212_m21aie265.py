@@ -168,7 +168,7 @@ def evaluate_prediction_on_test_set(y_test, y_pred):
   # print("Confusion Matrix:\n", conf_matrix)
   # return accuracy, precision, recall, f1, conf_matrix
 
-data_path = "/content/AMAZON_FASHION.csv"
+data_path = "/content/drive/MyDrive/Classroom/combined_data.csv"
 vectorizer = "delta_tf_idf"
 feature_selection = True
 

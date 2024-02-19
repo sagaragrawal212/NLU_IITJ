@@ -58,7 +58,7 @@ for classifier in classifiers:
         clf.train(X_train, y_train)
 
         # Make predictions on the test data
-        pred = clf.predict(X_test)
+        pred = clf.predict(X_test, y_test)
 
         # Calculate evaluation metrics
         accuracy = accuracy_score(y_test, pred)
